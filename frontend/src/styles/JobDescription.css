@@ -1,0 +1,8 @@
+.card {
+  position: relative;
+  width: 425px;
+  height: 600px;
+  .jobdes {
+    height: 300px;
+  }
+}

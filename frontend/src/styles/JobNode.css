@@ -1,0 +1,40 @@
+.jobnode {
+  .jobcard {
+    width: 65vh;
+    height: 15vh;
+    .jobcontent {
+      width: 65vh;
+      height: 15vh;
+      padding: 0rem;
+      .col {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
+    .col-1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15vh;
+      width: 15vh;
+      .profilepic {
+        width: 10vh;
+        height: 10vh;
+        img {
+        }
+      }
+    }
+    .col-3 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15vh;
+      width: 15vh;
+    }
+  }
+}
+.space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
