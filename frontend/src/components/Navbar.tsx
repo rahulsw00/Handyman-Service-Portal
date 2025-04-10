@@ -16,7 +16,7 @@ const Navbar = () => {
           <a href="/categories" className="text-gray-600 hover:text-blue-700">
             Categories
           </a>
-          <a href="/job" className="text-gray-600 hover:text-blue-700">
+          <a href="/take-job" className="text-gray-600 hover:text-blue-700">
             Jobs
           </a>
           <a href="/about-us" className="text-gray-600 hover:text-blue-700">
