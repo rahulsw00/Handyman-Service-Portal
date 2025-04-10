@@ -67,7 +67,37 @@ const JobNode = ({ job }) => {
             </div>
 
             <div className="col-3 flex items-center content-center h-2 w-2">
-              <Button className="take">Take</Button>
+              <Button
+                className="take"
+                onClick={async () => {
+                  try {
+                    const response = await fetch(
+                      "http://localhost:8000/job.php",
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          action: "get_job",
+                          job_id: job.job_id,
+                        }),
+                      }
+                    );
+
+                    if (!response.ok) {
+                      throw new Error("Failed to take the job");
+                    }
+
+                    // Navigate to another page after successful response
+                    window.location.href = `/take-job/${job.job_id}`;
+                  } catch (error) {
+                    console.error("Error taking the job:", error);
+                  }
+                }}
+              >
+                Details
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -79,8 +109,7 @@ const JobNode = ({ job }) => {
 // Main TakeJob component with pagination
 
 const TakeJob = () => {
-  const [jobData, setJobData] = useState([]);
-
+  const [jobsData, setJobsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [error, setError] = useState(null);
@@ -96,7 +125,15 @@ const TakeJob = () => {
       try {
         setIsLoading(true);
 
-        const response = await fetch("http://localhost:8000/job.php");
+        const response = await fetch("http://localhost:8000/job.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "get_jobs_data",
+          }),
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");
@@ -104,7 +141,7 @@ const TakeJob = () => {
 
         const data = await response.json();
 
-        setJobData(data);
+        setJobsData(data);
 
         setIsLoading(false);
       } catch (error) {
@@ -125,11 +162,11 @@ const TakeJob = () => {
 
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
 
-  const currentJobs = jobData.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = jobsData.slice(indexOfFirstJob, indexOfLastJob);
 
   // Calculate total pages
 
-  const totalPages = Math.ceil(jobData.length / jobsPerPage);
+  const totalPages = Math.ceil(jobsData.length / jobsPerPage);
 
   // Change page
 
@@ -192,7 +229,7 @@ const TakeJob = () => {
 
         {/* Pagination Controls */}
 
-        {!isLoading && !error && jobData.length > 0 && (
+        {!isLoading && !error && jobsData.length > 0 && (
           <div className="pagination-controls flex justify-center items-center gap-4 mt-4">
             <Button
               onClick={goToPreviousPage}

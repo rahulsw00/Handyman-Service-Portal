@@ -1,0 +1,13 @@
+# Enable URL rewriting
+
+RewriteEngine On
+
+# Set the base directory (adjust if your PHP file is in a subdirectory)
+
+# RewriteBase /
+
+# Send all requests to the categories.php file, except for existing files and directories
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.\*)$ categories.php [QSA,L]

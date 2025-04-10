@@ -1,42 +1,3 @@
-// import React, { useState, useEffect, use } from "react";
-// import { Link } from "react-router-dom";
-
-// function Categories() {
-//   const [categories, setCategory] = useState([]);
-
-//   useEffect(() => {
-//     fetch("http://localhost:5000/service-categories")
-//       .then((res) => res.json())
-//       .then((categories) => setCategory(categories))
-//       .catch((err) => console.error(err));
-//   }, []);
-
-//   return (
-//     <div className="flex items-center justify-center">
-//       <div className="flex flex-wrap justify-center">
-//         {categories.map((category, categoryIndex) => (
-//           <div
-//             key={categoryIndex}
-//             className="card bg-white shadow-md rounded-lg p-6 m-4 w-80"
-//           >
-//             <h3 className="font-bold mb-3">{category.name}</h3>
-
-//             <ul>
-//               {category.services.map((service, index) => (
-//                 <li key={index}>
-//                   <Link to={`/category/${service.services}`}>{service}</Link>
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Categories;
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -56,48 +17,83 @@ interface SubCategory {
 
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [subCategories, setSubCategories] = useState<{
-    [key: number]: SubCategory[];
-  }>({});
+  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch categories
-    const fetchCategories = async () => {
+    // Fetch categories and subcategories
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
+        // Fetch categories
+        const categoryResponse = await fetch(
+          "http://localhost:8000/categories.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+            body: JSON.stringify({
+              action: "category",
+            }),
+          }
+        );
+
+        if (!categoryResponse.ok) {
+          throw new Error(`HTTP error! Status: ${categoryResponse.status}`);
         }
-        const data = await response.json();
-        setCategories(data);
 
-        // Fetch subcategories for each category
-        const subcategoryPromises = data.map((category: Category) =>
-          fetch(`http://localhost:5000/api/services/${category.category_id}`)
-            .then((res) => res.json())
-            .then((subcats) => ({ [category.category_id]: subcats }))
+        const categoryData = await categoryResponse.json();
+        console.log("category data received:", categoryData);
+        setCategories(categoryData);
+
+        // Fetch subcategories
+        const subcategoryResponse = await fetch(
+          "http://localhost:8000/categories.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+            body: JSON.stringify({
+              action: "categories",
+            }),
+          }
         );
 
-        const subcategoryResults = await Promise.all(subcategoryPromises);
-        const subcategoryMap = subcategoryResults.reduce(
-          (acc, curr) => ({ ...acc, ...curr }),
-          {}
-        );
-        setSubCategories(subcategoryMap);
+        if (!subcategoryResponse.ok) {
+          throw new Error(`HTTP error! Status: ${subcategoryResponse.status}`);
+        }
+
+        const subcategoryData = await subcategoryResponse.json();
+        console.log("subcategory data received:", subcategoryData);
+        setSubCategories(subcategoryData);
 
         setLoading(false);
       } catch (err) {
-        setError("Error fetching categories");
+        console.error("Error fetching data:", err);
+        setError(
+          `Failed to load data: ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
         setLoading(false);
-        console.error(err);
       }
     };
 
-    fetchCategories();
+    fetchData();
   }, []);
+
+  console.log(categories);
+  console.log(subCategories);
+
+  // Get subcategories for a specific category
+  const getSubcategoriesForCategory = (categoryId: number) => {
+    return subCategories.filter(
+      (subCategory) => subCategory.category_id === categoryId
+    );
+  };
 
   // Handle category click to navigate to category landing page
   const handleCategoryClick = (categoryName: string, serviceId: number) => {
@@ -106,7 +102,7 @@ export default function Categories() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen w-screen">
         <div className="spinner-border text-blue-500" role="status">
           Loading...
         </div>
@@ -116,7 +112,7 @@ export default function Categories() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-red-500">
+      <div className="flex items-center justify-center min-h-screen text-red-500 w-screen">
         {error}
       </div>
     );
@@ -133,25 +129,22 @@ export default function Categories() {
           >
             <h3 className="text-xl font-bold mb-4">{category.name}</h3>
             <ul className="space-y-2">
-              {subCategories[category.category_id].map((subCategory) => (
-                <li
-                  key={subCategory.service_id}
-                  className="text-gray-700 hover:text-blue-600"
-                  onClick={() =>
-                    handleCategoryClick(
-                      subCategory.name,
-                      subCategory.service_id
-                    )
-                  }
-                >
-                  {subCategory.name}
-                </li>
-              ))}
-              {/* {subCategories[category.category_id]?.length > 5 && (
-                <li className="text-blue-500 font-semibold">
-                  + {subCategories[category.category_id].length - 5} more
-                </li>
-              )} */}
+              {getSubcategoriesForCategory(category.category_id).map(
+                (subCategory) => (
+                  <li
+                    key={subCategory.service_id}
+                    className="text-gray-700 hover:text-blue-600"
+                    onClick={() =>
+                      handleCategoryClick(
+                        subCategory.name,
+                        subCategory.service_id
+                      )
+                    }
+                  >
+                    {subCategory.name}
+                  </li>
+                )
+              )}
             </ul>
           </div>
         ))}
