@@ -10,6 +10,7 @@ import TakeJob from "./pages/TakeJob";
 import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
 import RegistrationPage from "./pages/Registration";
+import PostJobPage from "./pages/PostJob";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/take-job" element={<TakeJob />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/post-job" element={<PostJobPage />} />
       </Routes>
     </Router>
   );

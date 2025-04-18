@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
         const parsedData = JSON.parse(data);
         if (parsedData.success) {
           console.log("Login successful!");
-          localStorage.setItem("token", parsedData.token);
+          window.localStorage.setItem("token", parsedData.token);
           //localStorage.setItem("user", JSON.stringify(parsedData.user));
         } else if (data.includes("email_error")) {
           setError("Phone number not registered!");
@@ -61,7 +61,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 w-screen">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
@@ -117,7 +117,7 @@ const LoginPage: React.FC = () => {
             type={"submit"}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
-            Sign In
+            <a href="/profile">Sign In</a>
           </button>
         </form>
 

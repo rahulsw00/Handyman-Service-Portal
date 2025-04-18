@@ -50,6 +50,11 @@ try {
             $result = fetchJob($pdo, $requestData['job_id']);
             break;
 
+        case 'post_job':
+            // Post a new job
+            $result = postJob($pdo, $requestData);
+            break;
+
         default:
             // Method not supported
             http_response_code(405);
@@ -110,5 +115,77 @@ function fetchJob($pdo, $id)
     } else {
         http_response_code(404);
         return ["error" => "Job not found"];
+    }
+}
+
+/**
+ * Post a new job to the database
+ * 
+ * @param PDO $pdo Database connection
+ * @param array $data Job data
+ * @return array Success message or error
+ */
+function postJob($pdo, $data)
+{
+    try {
+        // Convert the flexible timing boolean to PostgreSQL boolean format
+        $flexibleTiming = $data['flexibleTiming'] ? 'true' : 'false';
+
+        // Convert preferredDateTime to PostgreSQL timestamp format
+        $preferredDateTime = date('Y-m-d H:i:s', strtotime($data['preferredDateTime']));
+
+        // Make sure budget values are numeric
+        $budgetMin = is_numeric($data['budgetRangeMin']) ? $data['budgetRangeMin'] : 0;
+        $budgetMax = is_numeric($data['budgetRangeMax']) ? $data['budgetRangeMax'] : 0;
+
+        // Note: We do NOT include job_id in the column list
+        $query = "INSERT INTO jobs (
+            title, 
+            description, 
+            address, 
+            city, 
+            state, 
+            postal_code, 
+            preferred_date_time, 
+            flexible_timing, 
+            budget_range_min, 
+            budget_range_max,
+            created_at
+        ) VALUES (
+            :title, 
+            :description, 
+            :address, 
+            :city, 
+            :state, 
+            :postalCode, 
+            :preferredDateTime, 
+            :flexibleTiming, 
+            :budgetRangeMin, 
+            :budgetRangeMax,
+            NOW()
+        )";
+
+        $stmt = $pdo->prepare($query);
+
+        // Bind parameters
+        $stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
+        $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+        $stmt->bindParam(':address', $data['address'], PDO::PARAM_STR);
+        $stmt->bindParam(':city', $data['city'], PDO::PARAM_STR);
+        $stmt->bindParam(':state', $data['state'], PDO::PARAM_STR);
+        $stmt->bindParam(':postalCode', $data['postalCode'], PDO::PARAM_STR);
+        $stmt->bindParam(':preferredDateTime', $preferredDateTime, PDO::PARAM_STR);
+        $stmt->bindParam(':flexibleTiming', $flexibleTiming, PDO::PARAM_STR);
+        $stmt->bindParam(':budgetRangeMin', $budgetMin, PDO::PARAM_INT);
+        $stmt->bindParam(':budgetRangeMax', $budgetMax, PDO::PARAM_INT);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            return ["success" => true, "message" => "Job posted successfully"];
+        } else {
+            return ["success" => false, "error" => "Failed to post job: " . implode(", ", $stmt->errorInfo())];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
     }
 }

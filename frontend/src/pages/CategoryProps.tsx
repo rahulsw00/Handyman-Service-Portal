@@ -72,7 +72,7 @@ const CategoryLandingPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 w-screen">
       <div className="relative w-full h-64 md:h-80 lg:h-96 bg-blue-600">
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
@@ -82,9 +82,9 @@ const CategoryLandingPage: React.FC = () => {
             {service.description_2}
           </p>
         </div>
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-4 right-4 pr-4">
           <Button variant="secondary" size="lg" className="font-semibold">
-            Post a job
+            <a href="/post-job">Post a job</a>
           </Button>
         </div>
       </div>
