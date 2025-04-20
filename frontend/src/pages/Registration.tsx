@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type UserType = "handyman" | "client";
 
@@ -81,6 +82,11 @@ const RegistrationPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const goto = () => {
+    const navigate = useNavigate();
+    navigate("/login");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -102,7 +108,9 @@ const RegistrationPage: React.FC = () => {
           console.log(JSON.parse(data));
           const parsedData = JSON.parse(data);
           if (parsedData.success) {
-            console.log("Login successful!");
+            console.log("Registration successful!");
+            const navigate = useNavigate();
+            navigate("/login");
           } else if (data.includes("existing_user_error")) {
             setError("User already exist");
           }
@@ -376,6 +384,7 @@ const RegistrationPage: React.FC = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            onClick={goto}
           >
             Register
           </button>

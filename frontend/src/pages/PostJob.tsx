@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const PostJobPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +20,14 @@ const PostJobPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const today = new Date();
   const minDate = today.toISOString().split("T")[0];
+  const navigate = useNavigate();
 
+  const accessToken = Cookies.get("accessToken");
+  //console.log("Access Token:", accessToken); // Debugging line
+
+  if (!accessToken) {
+    navigate("/login");
+  }
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -96,6 +105,7 @@ const PostJobPage: React.FC = () => {
           body: JSON.stringify({
             action: "post_job",
             ...formData,
+            token: accessToken,
           }),
         });
 

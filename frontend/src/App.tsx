@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
 import RegistrationPage from "./pages/Registration";
 import PostJobPage from "./pages/PostJob";
+import HandymanOffers from "./pages/jobapplications";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/post-job" element={<PostJobPage />} />
+        <Route path="/jobapp" element={<HandymanOffers />} />
       </Routes>
     </Router>
   );

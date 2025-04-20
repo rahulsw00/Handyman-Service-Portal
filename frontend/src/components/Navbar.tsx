@@ -1,8 +1,9 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
       <div className="container flex items-center justify-between py-4 mx-auto px-4">
@@ -24,14 +25,20 @@ const Navbar = () => {
           </a>
         </nav>
         <div>
-          <Avatar className="cursor-pointer inline-flex">
-            <AvatarImage src="/path/to/profile-picture.jpg" alt="Profile" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Button variant="outline" className="hidden md:inline-flex mr-2">
-            <a href="/login">Login</a>
+          <Button
+            onClick={() => navigate("/profile")}
+            variant="outline"
+            className="hidden md:inline-flex mr-2"
+          >
+            Profile
           </Button>
-          <Button className="md:inline-flex">Hire Now</Button>
+          <Button
+            onClick={() => navigate("/login")}
+            variant="outline"
+            className="hidden md:inline-flex mr-2"
+          >
+            Login
+          </Button>
         </div>
       </div>
     </header>

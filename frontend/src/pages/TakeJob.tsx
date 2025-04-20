@@ -184,7 +184,7 @@ const TakeJob = () => {
 
   return (
     <>
-      <div className="category flex flex-wrap gap-1 mt-1 mb-1">
+      {/* <div className="category flex flex-wrap gap-1 mt-1 mb-1 w-screen">
         <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Category" />
@@ -212,7 +212,7 @@ const TakeJob = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
 
       <div className="container w-screen flex flex-col">
         <div className="jobs-container flex flex-wrap gap-4 justify-between items-center mb-4">

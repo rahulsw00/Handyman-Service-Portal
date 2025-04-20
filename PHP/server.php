@@ -1,6 +1,7 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
@@ -68,7 +69,7 @@ function handleLogin($pdo, $requestData)
     $password = $requestData['password'];
 
     // Query to find user by phone number
-    $stmt = $pdo->prepare("SELECT user_id, phone_number, password_hash FROM users WHERE phone_number = :phone_number");
+    $stmt = $pdo->prepare("SELECT user_id, phone_number, password_hash, user_type FROM users WHERE phone_number = :phone_number");
     $stmt->bindParam(':phone_number', $phoneNumber);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -86,8 +87,7 @@ function handleLogin($pdo, $requestData)
         // Generate a token
         $token = bin2hex(random_bytes(16));
 
-        // Get current timestamp for last login
-        $currentTime = date('Y-m-d H:i:s');
+        // Removed unused $currentTime variable
         $tokenExpiry = date('Y-m-d H:i:s', strtotime('+1 day'));
 
         // Store token in database
@@ -96,6 +96,7 @@ function handleLogin($pdo, $requestData)
         $tokenStmt->bindParam(':expiry', $tokenExpiry);
         $tokenStmt->bindParam(':user_id', $user['user_id']);
         $tokenStmt->execute();
+
 
         // Return success response with token
         echo json_encode([
@@ -106,6 +107,14 @@ function handleLogin($pdo, $requestData)
                 "phoneNumber" => $user['phone_number']
             ],
             "token" => $token
+        ]);
+
+        setcookie('accessToken', $token, [
+            'expires' => time() + 86400, // 1 day
+            'path' => '/',
+            'secure' => true,      // HTTPS only
+            'httponly' => false, // Accessible via JavaScript (if needed)
+            'samesite' => 'Strict' // Prevents CSRF
         ]);
     } else {
         // Password incorrect

@@ -10,10 +10,11 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { register, handleSubmit } = useForm();
-
+  const navigate = useNavigate();
   const onSubmit = (data) => {
     fetch("http://localhost:8000/server.php", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json; cahrset=UTF-8",
       },
@@ -29,11 +30,11 @@ const LoginPage: React.FC = () => {
       })
       .then((data) => {
         setError("");
-        console.log(JSON.parse(data));
+        console.log(JSON.parse(data)); // remove this line after testing
         const parsedData = JSON.parse(data);
         if (parsedData.success) {
           console.log("Login successful!");
-          window.localStorage.setItem("token", parsedData.token);
+          navigate("/");
           //localStorage.setItem("user", JSON.stringify(parsedData.user));
         } else if (data.includes("email_error")) {
           setError("Phone number not registered!");
@@ -117,7 +118,7 @@ const LoginPage: React.FC = () => {
             type={"submit"}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
-            <a href="/profile">Sign In</a>
+            Sign In
           </button>
         </form>
 

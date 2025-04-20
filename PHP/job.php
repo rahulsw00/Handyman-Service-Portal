@@ -55,6 +55,9 @@ try {
             $result = postJob($pdo, $requestData);
             break;
 
+        case 'make_offer':
+            $result = makeOffer($pdo, $requestData);
+            break;
         default:
             // Method not supported
             http_response_code(405);
@@ -138,6 +141,10 @@ function postJob($pdo, $data)
         $budgetMin = is_numeric($data['budgetRangeMin']) ? $data['budgetRangeMin'] : 0;
         $budgetMax = is_numeric($data['budgetRangeMax']) ? $data['budgetRangeMax'] : 0;
 
+        $user = $pdo->prepare("SELECT user_id FROM users WHERE token = :token");
+        $user->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $user->execute();
+        $userID = $user->fetch(PDO::FETCH_ASSOC);
         // Note: We do NOT include job_id in the column list
         $query = "INSERT INTO jobs (
             title, 
@@ -150,7 +157,9 @@ function postJob($pdo, $data)
             flexible_timing, 
             budget_range_min, 
             budget_range_max,
+            client_id,
             created_at
+            
         ) VALUES (
             :title, 
             :description, 
@@ -162,6 +171,7 @@ function postJob($pdo, $data)
             :flexibleTiming, 
             :budgetRangeMin, 
             :budgetRangeMax,
+            :userID,
             NOW()
         )";
 
@@ -178,6 +188,7 @@ function postJob($pdo, $data)
         $stmt->bindParam(':flexibleTiming', $flexibleTiming, PDO::PARAM_STR);
         $stmt->bindParam(':budgetRangeMin', $budgetMin, PDO::PARAM_INT);
         $stmt->bindParam(':budgetRangeMax', $budgetMax, PDO::PARAM_INT);
+        $stmt->bindParam(':userID', $userID['user_id'], PDO::PARAM_INT);
 
         // Execute the query
         if ($stmt->execute()) {
@@ -188,4 +199,12 @@ function postJob($pdo, $data)
     } catch (PDOException $e) {
         return ["success" => false, "error" => "Database error: " . $e->getMessage()];
     }
+}
+
+function makeOffer($pdo, $data)
+{
+
+    $stmt = $pdo->prepare("INSERT INTO job_applicaitons (job_id, user_id, price_quote, posted_by) VALUES (:job_id, :user_id, :offer_amount, :message)");
+    $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
 }

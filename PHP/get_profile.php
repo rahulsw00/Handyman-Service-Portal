@@ -1,5 +1,6 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
@@ -37,8 +38,24 @@ try {
     switch ($requestData['action']) {
         case 'profile':
             handleProfile($pdo, $requestData);
+            break;
+
+        case 'get_user_type':
+            // Get user type based on token
+            $token = filter_var($requestData['token']);
+            $stmt = $pdo->prepare("SELECT user_type FROM users WHERE token = :token");
+            $stmt->bindParam(':token', $token);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($row) {
+                echo json_encode($row, JSON_PRETTY_PRINT);
+            } else {
+                echo json_encode(["error" => "User not found"], JSON_PRETTY_PRINT);
+            }
+            break;
         default:
-            echo json_encode(["error" => "Invalid action"]);
+            echo json_encode(["error" => "Invalid action"], JSON_PRETTY_PRINT);
             exit;
     }
 } catch (Exception $e) {
@@ -52,30 +69,46 @@ try {
 function handleProfile($pdo, $requestData)
 {
     // Get and sanitize token
-    $token = filter_var($requestData['token'], FILTER_SANITIZE_NUMBER_INT);
+    $token = filter_var($requestData['token']);
 
     // Query to get user profile
-    $stmt = $pdo->prepare("SELECT first_name, last_name, phone_number, address, city, state, postal_code, token_expiry FROM users WHERE token = :token");
+    //$stmt = $pdo->prepare("SELECT user_id, first_name, last_name, phone_number, address, city, state, postal_code, user_type,created_at FROM users WHERE token = :token");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE token = :token");
     $stmt->bindParam(':token', $token);
     $stmt->execute();
-    $tokenExpiry = $stmt->fetchColumn('token_expiry');
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        echo json_encode([
+            "error" => "User not found"
+        ], JSON_PRETTY_PRINT);
+        exit;
+    }
+
+
+    $tokenExpiry = $row['token_expiry'];
     $currentTime = date('Y-m-d H:i:s');
-    $profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($tokenExpiry < $currentTime) {
         echo json_encode([
             "error" => "Token expired"
-        ]);
+        ], JSON_PRETTY_PRINT);
         exit;
     }
-    if ($profile) {
-        echo json_encode([
-            "success" => true,
-            "profile" => $profile
-        ]);
+
+    if ($row['user_type'] == 'handyman') {
+        fetchHandymanProfile($pdo, $row);
     } else {
-        echo json_encode([
-            "error" => "User not found"
-        ]);
+        echo json_encode($row, JSON_PRETTY_PRINT);
     }
+}
+
+function fetchHandymanProfile($pdo, $row)
+{
+    $stmt = $pdo->prepare("SELECT * FROM handyman_profiles WHERE user_id = :user_id");
+    $stmt->bindParam(':user_id', $row['user_id']);
+    $stmt->execute();
+    $handymanProfile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode(array_merge($row, $handymanProfile), JSON_PRETTY_PRINT);
 }
