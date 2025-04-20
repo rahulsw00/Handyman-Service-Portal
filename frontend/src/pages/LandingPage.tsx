@@ -34,7 +34,7 @@ export default function HandymanLandingPage() {
               </div>
               <div className="bg-gray-100 rounded-lg aspect-video overflow-hidden">
                 <img
-                  src="/api/placeholder/700/500"
+                  src="../src/assets/handyman home.jpg"
                   alt="Handyman at work"
                   className="w-full h-full object-cover"
                 />
@@ -50,47 +50,15 @@ export default function HandymanLandingPage() {
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="bg-white rounded-lg aspect-video overflow-hidden shadow-md">
                   <img
-                    src="/api/placeholder/600/400"
+                    src="../src/assets/illustration.jpg"
                     alt="Working process illustration"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="space-y-6">
                   <h3 className="text-2xl font-bold text-gray-800">
-                    A Big Title
+                    Reliable Repairs. Honest Service. Every Time.
                   </h3>
-                  <div className="space-y-4">
-                    <p className="flex items-start">
-                      <span className="mr-2 text-blue-600 flex-shrink-0">
-                        &#8250;
-                      </span>
-                      <span>
-                        A paragraph of text with an{" "}
-                        <a href="#" className="text-blue-600 underline">
-                          unsigned link
-                        </a>
-                        .
-                      </span>
-                    </p>
-                    <p className="flex items-start">
-                      <span className="mr-2 text-blue-600 flex-shrink-0">
-                        &#8250;
-                      </span>
-                      <span>
-                        A second row of text with a{" "}
-                        <a href="#" className="text-blue-600 underline">
-                          web link
-                        </a>
-                        .
-                      </span>
-                    </p>
-                    <p className="flex items-center">
-                      <span className="mr-2 text-blue-600 flex-shrink-0 inline-block w-4 h-4 text-center border border-blue-600 rounded-full text-xs">
-                        ✓
-                      </span>
-                      <span>An icon inline with text.</span>
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -168,26 +136,28 @@ export default function HandymanLandingPage() {
                 <Tabs defaultValue="testimonial-1" className="w-full">
                   <TabsContent value="testimonial-1">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <Card className="overflow-hidden">
-                        <CardContent className="p-6">
-                          <div className="flex items-center mb-4">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span
-                                key={star}
-                                className="text-yellow-500 text-lg"
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                          <p className="text-gray-600 mb-4">
-                            "The handyman was professional, on time, and did
-                            excellent work fixing our kitchen sink. Will
-                            definitely use this service again!"
-                          </p>
-                          <p className="font-medium">- Sarah J.</p>
-                        </CardContent>
-                      </Card>
+                      {[1, 2, 3, 4].map((item) => (
+                        <Card key={item} className="overflow-hidden">
+                          <CardContent className="p-6">
+                            <div className="flex items-center mb-4">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  className="text-yellow-500 text-lg"
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                              "The handyman was professional, on time, and did
+                              excellent work fixing our kitchen sink. Will
+                              definitely use this service again!"
+                            </p>
+                            <p className="font-medium">- Sarah J.</p>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </TabsContent>
                   <div className="flex justify-center mt-6">
@@ -252,7 +222,7 @@ export default function HandymanLandingPage() {
           </section>
         </div>
         {/* Footer */}
-        <footer className="bg-gray-100 border-t w-full">
+        <footer className="bg-gray-100 border-t px-10 w-screen">
           <div className="container mx-auto py-8 px-4">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-700 mb-4">
