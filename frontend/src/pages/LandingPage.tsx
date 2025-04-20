@@ -136,28 +136,97 @@ export default function HandymanLandingPage() {
                 <Tabs defaultValue="testimonial-1" className="w-full">
                   <TabsContent value="testimonial-1">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      {[1, 2, 3, 4].map((item) => (
-                        <Card key={item} className="overflow-hidden">
-                          <CardContent className="p-6">
-                            <div className="flex items-center mb-4">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                  key={star}
-                                  className="text-yellow-500 text-lg"
-                                >
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                            <p className="text-gray-600 mb-4">
-                              "The handyman was professional, on time, and did
-                              excellent work fixing our kitchen sink. Will
-                              definitely use this service again!"
-                            </p>
-                            <p className="font-medium">- Sarah J.</p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                      <Card className="overflow-hidden">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="text-yellow-500 text-lg"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-4">
+                            "Needed help with a bunch of little tasks before
+                            moving out—painting touch-ups, curtain installation,
+                            and replacing a light fixture. They handled it all
+                            with ease and even cleaned up after themselves.
+                            Super convenient and saved me a lot of time!"
+                          </p>
+                          <p className="font-medium">- Akash P.</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="overflow-hidden">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="text-yellow-500 text-lg"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-4">
+                            "I had a great experience with this handyman
+                            service! They arrived on time, brought all the
+                            necessary tools, and completed multiple tasks around
+                            my home—including fixing a leaky faucet and hanging
+                            shelves—quickly and efficiently. Very professional
+                            and reasonably priced. Highly recommend!"
+                          </p>
+                          <p className="font-medium">- Harshavardhan R.</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="overflow-hidden">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="text-yellow-500 text-lg"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-4">
+                            "Absolutely amazing service! The handyman was
+                            friendly, explained everything he was doing, and
+                            finished the job faster than I expected. He fixed my
+                            door, installed a curtain rod, and even helped move
+                            some furniture. Will definitely call them again!"
+                          </p>
+                          <p className="font-medium">- Sunil J.</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="overflow-hidden">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="text-yellow-500 text-lg"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-4">
+                            "It’s rare to find someone who is both skilled and
+                            trustworthy these days. The handyman not only did a
+                            great job fixing my kitchen cabinets, but he also
+                            noticed a safety issue with my porch railing and
+                            fixed it without charging extra. Very honest and
+                            hardworking!"
+                          </p>
+                          <p className="font-medium">- Rohan J.</p>
+                        </CardContent>
+                      </Card>
                     </div>
                   </TabsContent>
                   <div className="flex justify-center mt-6">
@@ -177,46 +246,6 @@ export default function HandymanLandingPage() {
                     </TabsList>
                   </div>
                 </Tabs>
-              </div>
-            </div>
-          </section>
-          {/* CTA Section */}
-          <section className="py-16 bg-white w-full">
-            <div className="w-full px-4 text-center">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                Ready to get started?
-              </h2>
-              <div className="max-w-xl mx-auto mb-8">
-                <p className="mb-2">
-                  A paragraph of text with an{" "}
-                  <a href="#" className="text-blue-600 underline">
-                    unsigned link
-                  </a>
-                  .
-                </p>
-                <p className="mb-2">
-                  A second row of text with a{" "}
-                  <a href="#" className="text-blue-600 underline">
-                    web link
-                  </a>
-                  .
-                </p>
-                <p className="flex justify-center items-center">
-                  <span className="mr-2 text-blue-600 inline-block">🔧</span>
-                  <span>An icon inline with text.</span>
-                </p>
-              </div>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button size="lg" className="px-8 py-6 text-lg">
-                  Hire a Handyman
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-8 py-6 text-lg"
-                >
-                  Register as a Handyman
-                </Button>
               </div>
             </div>
           </section>
