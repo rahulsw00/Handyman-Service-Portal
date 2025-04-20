@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import HandymanOffers from "./jobapplications";
+import HandymanOffers2 from "./jobapplicationshandyman";
 
 // Define TypeScript interfaces for our data structures
 interface UserProfile {
@@ -406,7 +407,7 @@ const ProfilePage: React.FC = () => {
                 <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
                   <TabsList className="grid grid-cols-2 mb-6">
                     <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="job_taken">Jobs taken</TabsTrigger>
+                    <TabsTrigger value="jobs_taken">Jobs taken</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="overview" className="space-y-6">
@@ -416,10 +417,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </TabsContent>
                   <TabsContent value="jobs_taken" className="space-y-6">
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">About</h3>
-                      <p className="text-gray-600">{profile.description}</p>
-                    </div>
+                    <HandymanOffers2 />
                   </TabsContent>
                 </Tabs>
               </CardContent>

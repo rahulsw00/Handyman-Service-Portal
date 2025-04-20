@@ -168,28 +168,26 @@ export default function HandymanLandingPage() {
                 <Tabs defaultValue="testimonial-1" className="w-full">
                   <TabsContent value="testimonial-1">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      {[1, 2, 3, 4].map((item) => (
-                        <Card key={item} className="overflow-hidden">
-                          <CardContent className="p-6">
-                            <div className="flex items-center mb-4">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                  key={star}
-                                  className="text-yellow-500 text-lg"
-                                >
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                            <p className="text-gray-600 mb-4">
-                              "The handyman was professional, on time, and did
-                              excellent work fixing our kitchen sink. Will
-                              definitely use this service again!"
-                            </p>
-                            <p className="font-medium">- Sarah J.</p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                      <Card className="overflow-hidden">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="text-yellow-500 text-lg"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-4">
+                            "The handyman was professional, on time, and did
+                            excellent work fixing our kitchen sink. Will
+                            definitely use this service again!"
+                          </p>
+                          <p className="font-medium">- Sarah J.</p>
+                        </CardContent>
+                      </Card>
                     </div>
                   </TabsContent>
                   <div className="flex justify-center mt-6">

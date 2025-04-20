@@ -10,9 +10,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { set } from "react-hook-form";
 
-export default function HandymanOffers() {
+export default function HandymanOffers2() {
   // Dummy job data
-
   const jobData = {
     description: "Fix leaking kitchen sink and replace faucet",
     address: "123 Main Street, Mumbai, Maharashtra 400001",
@@ -89,7 +88,7 @@ export default function HandymanOffers() {
   };
 
   return (
-    <div className="min-h-screen bg-white items-center justify-center pt-3 w-full">
+    <div className="min-h-full bg-white items-center justify-center pt-3 w-full">
       {/* Job Summary */}
       <Card className="mb-6">
         <CardHeader className="pb-2">
@@ -115,86 +114,6 @@ export default function HandymanOffers() {
           </p>
         </CardContent>
       </Card>
-
-      <h2 className="text-xl font-bold mb-4">Handyman Offers</h2>
-
-      {/* Offers List */}
-      <div className="space-y-4">
-        {offers.map((offer) => (
-          <Card
-            key={offer.id}
-            className={offer.selected ? "border-2 border-green-500" : ""}
-          >
-            <CardContent className="flex gap-4 pt-6">
-              {/* Avatar */}
-              <Avatar className="h-12 w-12">
-                <AvatarFallback>
-                  {offer.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-
-              {/* Content */}
-              <div className="flex-grow">
-                <div className="flex justify-between">
-                  <h3 className="font-bold">{offer.name}</h3>
-                  <div className="text-sm">
-                    <span className="text-yellow-500">★</span> {offer.rating} (
-                    {offer.jobs} jobs)
-                  </div>
-                </div>
-
-                <p className="text-gray-700 text-sm mt-1">{offer.notes}</p>
-
-                <div className="flex justify-between mt-3 text-sm">
-                  <div>
-                    Available:{" "}
-                    {new Date(offer.availability).toLocaleDateString()}
-                  </div>
-                  <div className="font-bold">Price: ₹{offer.price}</div>
-                </div>
-              </div>
-            </CardContent>
-
-            {/* Hire Button or Status */}
-            <CardFooter className={offer.selected ? "bg-green-50" : ""}>
-              {offer.selected ? (
-                <div className="w-full text-center text-green-700">
-                  <p>
-                    You've hired {offer.name}. They will contact you shortly.
-                  </p>
-                </div>
-              ) : (
-                <div className="w-full flex justify-end">
-                  {jobStatus === "ASSIGNED" ? (
-                    <Badge className="bg-gray-300 text-gray-600">
-                      Not Selected
-                    </Badge>
-                  ) : (
-                    <Button
-                      onClick={() => handleHire(offer.id)}
-                      disabled={isHiring}
-                    >
-                      {isHiring ? "Processing..." : "Hire Handyman"}
-                    </Button>
-                  )}
-                </div>
-              )}
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-
-      {/* Success Message */}
-      {jobStatus === "ASSIGNED" && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-          <p className="text-green-700">
-            You've successfully hired a handyman for this job!
-          </p>
-        </div>
-      )}
     </div>
   );
 }

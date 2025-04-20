@@ -12,6 +12,8 @@ import AboutUs from "./pages/AboutUs";
 import RegistrationPage from "./pages/Registration";
 import PostJobPage from "./pages/PostJob";
 import HandymanOffers from "./pages/jobapplications";
+import HandymanOffers2 from "./pages/jobapplicationshandyman";
+import UpiLink from "./pages/upilink";
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/post-job" element={<PostJobPage />} />
         <Route path="/jobapp" element={<HandymanOffers />} />
+        <Route path="/jobapp2" element={<HandymanOffers2 />} />
+        <Route path="/upi" element={<UpiLink />} />
       </Routes>
     </Router>
   );

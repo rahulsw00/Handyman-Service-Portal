@@ -8,15 +8,16 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import Cookies from "js-cookie";
+import { set } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 export default function JobDescription() {
   const [jobdata, setJobdata] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  const [offer, setOffer] = React.useState({
-    offer: "",
-  });
   const [userType, setUserType] = React.useState(null);
+  const [makeOffer, setMakeOffer] = React.useState(false);
+  const navigate = useNavigate();
 
   fetch("http://localhost:8000/get_profile.php", {
     method: "POST",
@@ -88,7 +89,6 @@ export default function JobDescription() {
       body: JSON.stringify({
         action: "make_offer",
         job_id: jobdata.job_id,
-        offer: offer,
         client_id: jobdata.client_id,
       }),
     });
@@ -185,15 +185,11 @@ export default function JobDescription() {
               </span>
             )}
           </div>
-          <input
-            type="number"
-            name="offer"
-            value={offer.offer}
-            onChange={(e) => setOffer({ ...offer, offer: e.target.value })}
-            className="w-20 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white "
-            placeholder="₹###"
-          />
-          <Button onClick={handleOffer} disabled={userType === "client"}>
+
+          <Button
+            onClick={() => navigate("/jobapp2")}
+            disabled={userType === "client"}
+          >
             Make an Offer
           </Button>
         </CardFooter>
