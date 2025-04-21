@@ -57,40 +57,9 @@ export default function HandymanLandingPage() {
                 </div>
                 <div className="space-y-6">
                   <h3 className="text-2xl font-bold text-gray-800">
-                    A Big Title
+                  Reliable Repairs. Honest Service. Every Time.
                   </h3>
-                  <div className="space-y-4">
-                    <p className="flex items-start">
-                      <span className="mr-2 text-blue-600 flex-shrink-0">
-                        &#8250;
-                      </span>
-                      <span>
-                        A paragraph of text with an{" "}
-                        <a href="#" className="text-blue-600 underline">
-                          unsigned link
-                        </a>
-                        .
-                      </span>
-                    </p>
-                    <p className="flex items-start">
-                      <span className="mr-2 text-blue-600 flex-shrink-0">
-                        &#8250;
-                      </span>
-                      <span>
-                        A second row of text with a{" "}
-                        <a href="#" className="text-blue-600 underline">
-                          web link
-                        </a>
-                        .
-                      </span>
-                    </p>
-                    <p className="flex items-center">
-                      <span className="mr-2 text-blue-600 flex-shrink-0 inline-block w-4 h-4 text-center border border-blue-600 rounded-full text-xs">
-                        ✓
-                      </span>
-                      <span>An icon inline with text.</span>
-                    </p>
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -307,7 +276,7 @@ export default function HandymanLandingPage() {
           </section>
         </div>
         {/* Footer */}
-        <footer className="bg-gray-100 border-t w-full">
+        <footer className="bg-gray-100 border-t px-10 w-screen">
           <div className="container mx-auto py-8 px-4">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-700 mb-4">
