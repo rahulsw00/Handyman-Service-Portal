@@ -34,7 +34,7 @@ export default function HandymanLandingPage() {
               </div>
               <div className="bg-gray-100 rounded-lg aspect-video overflow-hidden">
                 <img
-                  src="/api/placeholder/700/500"
+                  src="../src/assets/handyman home.jpg"
                   alt="Handyman at work"
                   className="w-full h-full object-cover"
                 />
@@ -50,7 +50,7 @@ export default function HandymanLandingPage() {
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="bg-white rounded-lg aspect-video overflow-hidden shadow-md">
                   <img
-                    src="/api/placeholder/600/400"
+                    src="../src/assets/illustration.jpg"
                     alt="Working process illustration"
                     className="w-full h-full object-cover"
                   />
@@ -168,8 +168,8 @@ export default function HandymanLandingPage() {
                 <Tabs defaultValue="testimonial-1" className="w-full">
                   <TabsContent value="testimonial-1">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      {[1, 2, 3, 4].map((item) => (
-                        <Card key={item} className="overflow-hidden">
+                     
+                        <Card  className="overflow-hidden">
                           <CardContent className="p-6">
                             <div className="flex items-center mb-4">
                               {[1, 2, 3, 4, 5].map((star) => (
@@ -182,14 +182,67 @@ export default function HandymanLandingPage() {
                               ))}
                             </div>
                             <p className="text-gray-600 mb-4">
-                              "The handyman was professional, on time, and did
-                              excellent work fixing our kitchen sink. Will
-                              definitely use this service again!"
+                              "Needed help with a bunch of little tasks before moving out—painting touch-ups, curtain installation, and replacing a light fixture. They handled it all with ease and even cleaned up after themselves. Super convenient and saved me a lot of time!"
                             </p>
-                            <p className="font-medium">- Sarah J.</p>
+                            <p className="font-medium">- Akash P.</p>
                           </CardContent>
                         </Card>
-                      ))}
+                     
+                        <Card  className="overflow-hidden">
+                          <CardContent className="p-6">
+                            <div className="flex items-center mb-4">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  className="text-yellow-500 text-lg"
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                            "I had a great experience with this handyman service! They arrived on time, brought all the necessary tools, and completed multiple tasks around my home—including fixing a leaky faucet and hanging shelves—quickly and efficiently. Very professional and reasonably priced. Highly recommend!"
+                            </p>
+                            <p className="font-medium">- Harshavardhan R.</p>
+                          </CardContent>
+                        </Card>
+                        <Card  className="overflow-hidden">
+                          <CardContent className="p-6">
+                            <div className="flex items-center mb-4">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  className="text-yellow-500 text-lg"
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                              "Absolutely amazing service! The handyman was friendly, explained everything he was doing, and finished the job faster than I expected. He fixed my door, installed a curtain rod, and even helped move some furniture. Will definitely call them again!"
+                            </p>
+                            <p className="font-medium">- Sunil J.</p>
+                          </CardContent>
+                        </Card>
+                        <Card  className="overflow-hidden">
+                          <CardContent className="p-6">
+                            <div className="flex items-center mb-4">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  className="text-yellow-500 text-lg"
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                              "It’s rare to find someone who is both skilled and trustworthy these days. The handyman not only did a great job fixing my kitchen cabinets, but he also noticed a safety issue with my porch railing and fixed it without charging extra. Very honest and hardworking!"
+                            </p>
+                            <p className="font-medium">- Rohan J.</p>
+                          </CardContent>
+                        </Card>
+                     
                     </div>
                   </TabsContent>
                   <div className="flex justify-center mt-6">
