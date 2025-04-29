@@ -70,6 +70,22 @@ try {
         case 'hire_handyman':
             $result = hireHandyman($pdo, $requestData);
             break;
+
+        case 'update_job_confirmation':
+            $result = updateJobConfirmation($pdo, $requestData);
+            break;
+
+        case 'check_assigned':
+            $result = checkAssigned($pdo, $requestData);
+            break;
+
+        case 'job_applied':
+            $result = checkApplied($pdo, $requestData);
+            break;
+
+        case 'check_job_completion':
+            $result = checkJobCompletion($pdo, $requestData);
+            break;
         default:
             // Method not supported
             http_response_code(405);
@@ -89,24 +105,162 @@ try {
     $pdo = null;
 }
 
+function checkJobCompletion($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT * FROM job_assignments WHERE job_id = :job_id AND client_confirm = 'completed' AND handyman_confirm = 'completed'"
+        );
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return ["success" => false, "message" => "Job is not completed yet"];
+        } else {
+            return [$row['agreed_price'], "success" => true, "message" => "Job is completed"];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+}
+
+
+function checkApplied($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE token = :token");
+        $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            http_response_code(401);
+            return ["error" => "Unauthorized"];
+        }
+        $stmt = $pdo->prepare("SELECT * FROM job_applications WHERE handyman_id = :handyman_id");
+        $stmt->bindParam(':handyman_id', $row['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $jobapp = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$jobapp) {
+            return ["success" => false, "message" => "No job applications found for this handyman"];
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM jobs WHERE job_id = :job_id");
+        $stmt->bindParam(':job_id', $jobapp['job_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $jobRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$jobRow) {
+            return ["success" => false, "message" => "No job found for this handyman"];
+        } else {
+            return $jobRow;
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+}
+function checkAssigned($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE token = :token");
+        $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            http_response_code(401);
+            return ["error" => "Unauthorized"];
+        }
+        $stmt = $pdo->prepare("SELECT * FROM job_assignments WHERE job_id = :job_id AND handyman_id = :handyman_id");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':handyman_id', $row['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return ["success" => true, "message" => "Handyman is already assigned to this job"];
+        } else {
+            return ["success" => false, "message" => "Handyman is not assigned to this job"];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+}
+
+function updateJobConfirmation($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE token = :token");
+        $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            http_response_code(401);
+            return ["error" => "Unauthorized"];
+        }
+
+        if ($row['user_type'] === 'handyman') {
+            $stmt = $pdo->prepare("UPDATE job_assignments SET handyman_confirm = :status WHERE job_id = :job_id AND handyman_id = :handyman_id");
+            $stmt->bindParam(':status', $data['value'], PDO::PARAM_STR);
+            $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            $stmt->bindParam(':handyman_id', $row['user_id'], PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return ["success" => true, "message" => "Handyman confirmation updated successfully"];
+            } else {
+                return ["success" => false, "error" => "Failed to update handyman confirmation: " . implode(", ", $stmt->errorInfo())];
+            }
+        } elseif ($row['user_type'] === 'client') {
+            $stmt = $pdo->prepare("UPDATE job_assignments SET client_confirm = :status WHERE job_id = :job_id AND client_id = :client_id");
+            $stmt->bindParam(':status', $data['value'], PDO::PARAM_STR);
+            $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            $stmt->bindParam(':client_id', $row['user_id'], PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return ["success" => true, "message" => "Client confirmation updated successfully"];
+            } else {
+                return ["success" => false, "error" => "Failed to update client confirmation: " . implode(", ", $stmt->errorInfo())];
+            }
+        } else {
+            http_response_code(403);
+            return ["error" => "Forbidden"];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+}
+
 function hireHandyman($pdo, $data)
 {
     try {
-        $stmt = $pdo->prepare("INSERT INTO job_assignments (job_id, handyman_id, client_id, agreed_price, agreed_hours) VALUES (:job_id, :handyman_id, :client_id, :agreed_price, :agreed_hours)");
+        $stmt = $pdo->prepare("SELECT * FROM jobs WHERE job_id = :job_id");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $jobRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $pdo->prepare("INSERT INTO job_assignments (job_id, handyman_id, client_id, agreed_price, agreed_hours, status) VALUES (:job_id, :handyman_id, :client_id, :agreed_price, :agreed_hours, :status)");
         $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
         $stmt->bindParam(':handyman_id', $data['handyman_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':client_id', $data['client_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':client_id', $jobRow['client_id'], PDO::PARAM_INT);
         $stmt->bindParam(':agreed_price', $data['agreed_price'], PDO::PARAM_STR);
         $stmt->bindParam(':agreed_hours', $data['agreed_hours'], PDO::PARAM_INT);
+        $status = 'in_progress';
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
         if ($stmt->execute()) {
             // Delete the job application after hiring
             // $deleteStmt = $pdo->prepare("DELETE FROM job_applications WHERE job_id = :job_id");
             // $deleteStmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
             // $deleteStmt->bindParam(':handyman_id', $data['handyman_id'], PDO::PARAM_INT);
             // $deleteStmt->execute();
+
+            $stmt = $pdo->prepare("UPDATE job_applications SET status = 'accepted' WHERE job_id = :job_id AND handyman_id = :handyman_id");
+            $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            $stmt->bindParam(':handyman_id', $data['handyman_id'], PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $pdo->prepare("UPDATE jobs SET status = 'in_progress' WHERE job_id = :job_id");
+            $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            $stmt->execute();
+
             return ["success" => true, "message" => "Handyman hired successfully"];
         } else {
-            return ["success" => false, "error" => "Failed to hire handyman: " . implode(", ", $stmt->errorInfo())];
+            return ["success" => false, "error" => "Failed to hire handyman: "];
         }
     } catch (PDOException $e) {
         return ["success" => false, "error" => "Database error: " . $e->getMessage()];
@@ -119,7 +273,7 @@ function getJobOffers($pdo, $data)
         $stmt = $pdo->prepare("SELECT ja.*, u.first_name, u.last_name 
                        FROM job_applications ja 
                        JOIN users u ON ja.handyman_id = u.user_id 
-                       WHERE ja.job_id = :job_id");
+                       WHERE ja.job_id = :job_id AND ja.status = 'pending'");
         $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
         $stmt->execute();
         $offers = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -129,7 +283,7 @@ function getJobOffers($pdo, $data)
             return $offers;
         } else {
             http_response_code(404);
-            return ["message" => "No offers found for this job"];
+            return ["success" => false, "message" => "No offers found for this job"];
         }
     } catch (PDOException $e) {
         return ["success" => false, "error" => "Database error: " . $e->getMessage()];
@@ -139,29 +293,32 @@ function getJobOffers($pdo, $data)
 
 function postedJobs($pdo, $data)
 {
+    try {
+        $stmt = $pdo->prepare("SELECT user_id FROM users WHERE token = :token");
+        $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE token = :token");
-    $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            http_response_code(401);
+            return ["error" => "Unauthorized"];
+        }
 
-    if (!$row) {
-        http_response_code(401);
-        return ["error" => "Unauthorized"];
-    }
+        $stmt = $pdo->prepare("SELECT * FROM jobs WHERE client_id = :client_id AND (status = 'open' OR status='in_progress') ORDER BY created_at DESC");
+        $stmt->bindParam(':client_id', $row['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("SELECT * FROM jobs WHERE client_id = :client_id ORDER BY created_at DESC");
-    $stmt->bindParam(':client_id', $row['user_id'], PDO::PARAM_INT);
-    $stmt->execute();
-    $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if (count($jobs) > 0) {
+        if (count($jobs) > 0) {
+            return $jobs;
+        } else {
+            http_response_code(404);
+            return ["sucess" => false, "message" => "No jobs found"];
+        }
         return $jobs;
-    } else {
-        http_response_code(404);
-        return ["message" => "No jobs found"];
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
     }
-    return $jobs;
 }
 
 /**

@@ -24,26 +24,20 @@ import { X } from "lucide-react";
 import Cookies from "js-cookie";
 
 export default function HandymanOffers() {
-  // Dummy job data
-  const jobData = {
-    description: "Fix leaking kitchen sink and replace faucet",
-    address: "123 Main Street, Mumbai, Maharashtra 400001",
-    preferred_date_time: "2025-04-25T10:00:00",
-    budget_range_min: 1000,
-    budget_range_max: 3000,
-  };
-
   const [jobStatus, setJobStatus] = useState("PENDING");
+
   const [jobdata, setJobdata] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [isHiring, setIsHiring] = useState(false);
+
   const [offerSubmitted, setOfferSubmitted] = useState(false);
+
   const [offerAmount, setOfferAmount] = useState("");
   const [availableDate, setAvailableDate] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [estimatedHours, setEstimatedHours] = useState("");
+
   const accessToken = Cookies.get("accessToken");
   const job_id = window.location.pathname.split("/").pop();
 
@@ -82,6 +76,7 @@ export default function HandymanOffers() {
       setLoading(false);
     }
   }, []);
+
   const handleSubmitOffer = async () => {
     // Here you would typically send this data to your backend
     await fetch("http://localhost:8000/job.php", {
@@ -231,7 +226,7 @@ export default function HandymanOffers() {
                 </Label>
                 <Input
                   id="date"
-                  type="datetime-local"
+                  type="date"
                   className="col-span-3"
                   value={availableDate}
                   onChange={(e) => setAvailableDate(e.target.value)}
