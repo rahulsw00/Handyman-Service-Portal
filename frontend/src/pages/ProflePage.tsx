@@ -208,6 +208,16 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                <Button
+                  className="w-full mt-4 bg-gray-700 text-white hover:bg-red-500"
+                  onClick={() => {
+                    Cookies.remove("accessToken");
+                    navigate("/login");
+                  }}
+                >
+                  Logout
+                </Button>
               </Card>
 
               {/* Contact Information */}
@@ -217,7 +227,7 @@ const ProfilePage: React.FC = () => {
                     Contact Information
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex">
+                    {/* <div className="flex">
                       <svg
                         className="h-5 w-5 mr-3 text-gray-500"
                         xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +238,7 @@ const ProfilePage: React.FC = () => {
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                       </svg>
                       <span>email</span>
-                    </div>
+                    </div> */}
                     <div className="flex">
                       <svg
                         className="h-5 w-5 mr-3 text-gray-500"
@@ -357,7 +367,7 @@ const ProfilePage: React.FC = () => {
                   Contact Information
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex">
+                  {/* <div className="flex">
                     <svg
                       className="h-5 w-5 mr-3 text-gray-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -368,7 +378,7 @@ const ProfilePage: React.FC = () => {
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                     </svg>
                     <span>email</span>
-                  </div>
+                  </div> */}
                   <div className="flex">
                     <svg
                       className="h-5 w-5 mr-3 text-gray-500"

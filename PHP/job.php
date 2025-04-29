@@ -58,6 +58,18 @@ try {
         case 'make_offer':
             $result = makeOffer($pdo, $requestData);
             break;
+
+        case 'posted_jobs':
+            $result = postedJobs($pdo, $requestData);
+            break;
+
+        case 'get_job_offers':
+            $result = getJobOffers($pdo, $requestData);
+            break;
+
+        case 'hire_handyman':
+            $result = hireHandyman($pdo, $requestData);
+            break;
         default:
             // Method not supported
             http_response_code(405);
@@ -75,6 +87,81 @@ try {
 } finally {
     // Close the connection
     $pdo = null;
+}
+
+function hireHandyman($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare("INSERT INTO job_assignments (job_id, handyman_id, client_id, agreed_price, agreed_hours) VALUES (:job_id, :handyman_id, :client_id, :agreed_price, :agreed_hours)");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':handyman_id', $data['handyman_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':client_id', $data['client_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':agreed_price', $data['agreed_price'], PDO::PARAM_STR);
+        $stmt->bindParam(':agreed_hours', $data['agreed_hours'], PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            // Delete the job application after hiring
+            // $deleteStmt = $pdo->prepare("DELETE FROM job_applications WHERE job_id = :job_id");
+            // $deleteStmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            // $deleteStmt->bindParam(':handyman_id', $data['handyman_id'], PDO::PARAM_INT);
+            // $deleteStmt->execute();
+            return ["success" => true, "message" => "Handyman hired successfully"];
+        } else {
+            return ["success" => false, "error" => "Failed to hire handyman: " . implode(", ", $stmt->errorInfo())];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+}
+
+function getJobOffers($pdo, $data)
+{
+    try {
+        $stmt = $pdo->prepare("SELECT ja.*, u.first_name, u.last_name 
+                       FROM job_applications ja 
+                       JOIN users u ON ja.handyman_id = u.user_id 
+                       WHERE ja.job_id = :job_id");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $offers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+        if (count($offers) > 0) {
+            return $offers;
+        } else {
+            http_response_code(404);
+            return ["message" => "No offers found for this job"];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
+    return $offers;
+}
+
+function postedJobs($pdo, $data)
+{
+
+    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE token = :token");
+    $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        http_response_code(401);
+        return ["error" => "Unauthorized"];
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM jobs WHERE client_id = :client_id ORDER BY created_at DESC");
+    $stmt->bindParam(':client_id', $row['user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (count($jobs) > 0) {
+        return $jobs;
+    } else {
+        http_response_code(404);
+        return ["message" => "No jobs found"];
+    }
+    return $jobs;
 }
 
 /**
@@ -203,8 +290,61 @@ function postJob($pdo, $data)
 
 function makeOffer($pdo, $data)
 {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE token = :token");
+        $stmt->bindParam(':token', $data['token'], PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("INSERT INTO job_applicaitons (job_id, user_id, price_quote, posted_by) VALUES (:job_id, :user_id, :offer_amount, :message)");
-    $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
-    $stmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
+        $stmt = $pdo->prepare("SELECT client_id FROM jobs WHERE job_id = :job_id");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $jobRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $pdo->prepare("SELECT * FROM job_applications WHERE job_id = :job_id AND handyman_id = :handyman_id");
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':handyman_id', $row['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $existingApplication = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existingApplication) {
+            $deleteStmt = $pdo->prepare("DELETE FROM job_applications WHERE job_id = :job_id AND handyman_id = :handyman_id");
+            $deleteStmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+            $deleteStmt->bindParam(':handyman_id', $row['user_id'], PDO::PARAM_INT);
+            $deleteStmt->execute();
+        }
+        $stmt = $pdo->prepare("INSERT INTO job_applications (
+        job_id,
+        handyman_id,
+        price_quote, 
+        availability_date, 
+        additional_notes, 
+        estimated_hours,
+        posted_by
+    ) VALUES (
+        :job_id, 
+        :user_id, 
+        :offer_amount, 
+        :available_date, 
+        :additional_notes, 
+        :estimated_hours,
+        :client_id
+    )");
+
+        $stmt->bindParam(':job_id', $data['job_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $row['user_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':offer_amount', $data['offer_amount'], PDO::PARAM_STR);
+        $stmt->bindParam(':available_date', $data['available_date'], PDO::PARAM_STR);
+        $stmt->bindParam(':additional_notes', $data['additional_notes'], PDO::PARAM_STR);
+        $stmt->bindParam(':estimated_hours', $data['estimated_hours'], PDO::PARAM_INT);
+        $stmt->bindParam(':client_id', $jobRow['client_id'], PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return ["success" => true, "message" => "Application posted successfully"];
+        } else {
+            return ["success" => false, "error" => "Failed to post applicaton: " . implode(", ", $stmt->errorInfo())];
+        }
+    } catch (PDOException $e) {
+        return ["success" => false, "error" => "Database error: " . $e->getMessage()];
+    }
 }

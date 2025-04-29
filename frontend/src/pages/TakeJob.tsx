@@ -118,7 +118,7 @@ const TakeJob = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [jobsPerPage] = useState(6); // Adjust this number based on your layout
+  const [jobsPerPage] = useState(9); // Adjust this number based on your layout
 
   useEffect(() => {
     const fetchData = async () => {
@@ -214,8 +214,8 @@ const TakeJob = () => {
         </Select>
       </div> */}
 
-      <div className="container w-screen flex flex-col">
-        <div className="jobs-container flex flex-wrap gap-4 justify-between items-center mb-4">
+      <div className="container w-screen flex flex-col pt-[5%]">
+        <div className="jobs-container flex flex-wrap justify-center gap-2 items-center mb-4">
           {isLoading ? (
             <p>Loading jobs...</p>
           ) : error ? (

@@ -19,6 +19,13 @@ export default function JobDescription() {
   const [makeOffer, setMakeOffer] = React.useState(false);
   const navigate = useNavigate();
 
+  const accessToken = Cookies.get("accessToken");
+  //console.log("Access Token:", accessToken); // Debugging line
+
+  if (!accessToken) {
+    navigate("/login");
+  }
+
   fetch("http://localhost:8000/get_profile.php", {
     method: "POST",
     headers: {
@@ -26,7 +33,7 @@ export default function JobDescription() {
     },
     body: JSON.stringify({
       action: "get_user_type",
-      token: Cookies.get("accessToken"),
+      token: accessToken,
     }),
   }).then(async (response) => {
     // Store the response text for debugging
@@ -187,7 +194,10 @@ export default function JobDescription() {
           </div>
 
           <Button
-            onClick={() => navigate("/jobapp2")}
+            onClick={() => {
+              const job_id = window.location.pathname.split("/").pop();
+              window.location.href = `/jobapp2/${job_id}`;
+            }}
             disabled={userType === "client"}
           >
             Make an Offer

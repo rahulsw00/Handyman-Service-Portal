@@ -4,27 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 const AboutUs = () => {
-  const teamMembers = [
-    {
-      name: "Jack Thompson",
-      role: "Founder & Senior Technician",
-      bio: "With 20 years of hands-on experience, Jack founded FixMasters to provide top-quality home repair services.",
-      imageSrc: "/api/placeholder/150/150",
-    },
-    {
-      name: "Sarah Rodriguez",
-      role: "Operations Manager",
-      bio: "Sarah ensures smooth operations and coordinates our team of skilled technicians.",
-      imageSrc: "/api/placeholder/150/150",
-    },
-    {
-      name: "Mike Chen",
-      role: "Lead Electrician",
-      bio: "Specializing in electrical systems with over 15 years of professional experience.",
-      imageSrc: "/api/placeholder/150/150",
-    },
-  ];
-
   return (
     <div className="container flex-col w-screen mx-auto px-4 py-12">
       <div className="text-center mb-12">
@@ -37,8 +16,6 @@ const AboutUs = () => {
           mission is to make home repairs hassle-free and efficient.
         </p>
       </div>
-
-
 
       <div className="text-center mt-12">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
