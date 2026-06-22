@@ -21,7 +21,7 @@ function HandymanApplications() {
   const [offersData, setOffersData] = useState({});
   const accessToken = Cookies.get("accessToken");
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | number | Date) => {
     const options = {
       year: "numeric" as "numeric",
       month: "long" as "long",
